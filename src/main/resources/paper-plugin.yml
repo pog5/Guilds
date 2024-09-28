@@ -1,0 +1,8 @@
+name: Guilds
+version: '1.0'
+main: me.pog5.guilds.Guilds
+api-version: '1.21'
+prefix: [ StrayUHC ]
+load: STARTUP
+authors: [ @pog5 ]
+description: Stray UHC plugin
