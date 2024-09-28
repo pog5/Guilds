@@ -8,7 +8,7 @@ class GDatabase(
     plugin: Guilds,
     connectinString: String = plugin.config.getString("mongo-uri") ?: "mongodb://localhost"
 ) {
-    val mongoClient = MongoClient.create(connectinString)
+    private val mongoClient = MongoClient.create(connectinString)
     private val database = mongoClient.getDatabase("nightly")
     val collection = database.getCollection<Guild>("guilds")
 }

@@ -22,7 +22,7 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
-          distribution: temurin
+          distribution: graalvm
           cache: gradle
           java-version: 21
       - run: chmod +x gradlew
