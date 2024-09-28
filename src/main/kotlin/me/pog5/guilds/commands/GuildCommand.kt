@@ -226,7 +226,10 @@ class GuildCommand : BaseCommand() {
     @CommandCompletion("@guilds")
     fun GuildInfoCommand(sender: CommandSender, @Optional @Single name: String?) {
         val uuid = plugin.server.getPlayer(sender.name)?.uniqueId ?: return
-        val guild = plugin.guildManager.getGuildFromPlayer(uuid) ?: return
+        var guild = plugin.guildManager.getGuildFromPlayer(uuid) ?: return;
+        if (name != null) {
+            guild = plugin.guildManager.getGuild(name) ?: return
+        }
 
         val leaderName: Component = guild.members.entries.filter { it.value == GuildRole.LEADER }.map {
                 Component.text(
