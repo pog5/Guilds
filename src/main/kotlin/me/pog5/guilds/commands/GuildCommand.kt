@@ -30,10 +30,13 @@ class GuildCommand : BaseCommand() {
 
     @HelpCommand
     fun GuildHelpCommand(sender: CommandSender, help: CommandHelp) {
+        sender.sendMessage(Component.text("Guild Help", Palette.PURPLE))
         help.showHelp()
     }
 
     @Subcommand("create")
+    @Syntax("<name> <tag>")
+    @Description("Create a new guild.")
     fun GuildCreateCommand(sender: CommandSender, @Single name: String, @Single tag: String) {
         val uuid = plugin.server.getPlayer(sender.name)?.uniqueId ?: return
         plugin.guildManager.createGuild(name, tag, uuid)
@@ -41,6 +44,8 @@ class GuildCommand : BaseCommand() {
     }
 
     @Subcommand("disband")
+    @Syntax("<name> to confirm")
+    @Description("Leader: Delete your guild")
     fun GuildDisbandCommand(sender: CommandSender, @Optional @Single name: String) {
         if (!permCheck(sender, GuildRole.LEADER)) return
         val guild = plugin.guildManager.getGuild(name) ?: return
@@ -60,10 +65,13 @@ class GuildCommand : BaseCommand() {
     }
 
     @Subcommand("invite")
+    @Syntax("<player>")
+    @Description("Officer: Invite a player to your guild.")
     @CommandCompletion("@players")
-    fun GuildInviteCommand(sender: CommandSender, @Single name: String, @Single player: String) {
+    fun GuildInviteCommand(sender: CommandSender, @Single player: String) {
+        val uuid = plugin.server.getPlayer(sender.name)?.uniqueId ?: return
         if (!permCheck(sender, GuildRole.OFFICER)) return
-        val guild = plugin.guildManager.getGuild(name) ?: return
+        val guild = plugin.guildManager.getGuildFromPlayer(uuid) ?: return
         val target = plugin.server.getPlayer(player) ?: run {
             sender.sendMessage(Component.text("Player $player not found!", Palette.STATUSLINE3))
             return
@@ -74,6 +82,8 @@ class GuildCommand : BaseCommand() {
     }
 
     @Subcommand("join")
+    @Syntax("<name>")
+    @Description("Join a guild that invited you.")
     fun GuildJoinCommand(sender: CommandSender, @Single name: String) {
         val uuid = plugin.server.getPlayer(sender.name)?.uniqueId ?: return
         val guild = plugin.guildManager.getGuild(name) ?: run {
@@ -85,6 +95,8 @@ class GuildCommand : BaseCommand() {
     }
 
     @Subcommand("leave")
+    @Syntax("<name> to confirm")
+    @Description("Leave your current guild.")
     fun GuildLeaveCommand(sender: CommandSender, @Optional @Single name: String?) {
         val uuid = plugin.server.getPlayer(sender.name)?.uniqueId ?: return
         if (!permCheck(sender, GuildRole.MEMBER)) return
@@ -103,6 +115,8 @@ class GuildCommand : BaseCommand() {
     }
 
     @Subcommand("kick")
+    @Syntax("<player>")
+    @Description("Officer: Kick a player from your guild.")
     @CommandCompletion("@guildMembers")
     fun GuildKickCommand(sender: CommandSender, @Single player: String) {
         if (!permCheck(sender, GuildRole.OFFICER)) return
@@ -113,6 +127,7 @@ class GuildCommand : BaseCommand() {
     }
 
     @Subcommand("list")
+    @Description("List all guilds and their online/total players.")
     fun GuildListCommand(sender: CommandSender) {
         val guilds = plugin.guildManager.guilds
         val onlineGuilds = guilds.filter { guild ->
@@ -131,6 +146,8 @@ class GuildCommand : BaseCommand() {
     }
 
     @Subcommand("setname")
+    @Syntax("<name>")
+    @Description("Leader: Set your guild's name.")
     fun GuildSetNameCommand(sender: CommandSender, @Single name: String) {
         if (!permCheck(sender, GuildRole.LEADER)) return
         val guild = plugin.guildManager.getGuildFromPlayer(plugin.server.getPlayer(sender.name)?.uniqueId!!) ?: return
@@ -140,6 +157,8 @@ class GuildCommand : BaseCommand() {
     }
 
     @Subcommand("settag")
+    @Syntax("<tag>")
+    @Description("Leader: Set your guild's tag.")
     fun GuildSetTagCommand(sender: CommandSender, @Single tag: String) {
         if (!permCheck(sender, GuildRole.LEADER)) return
         val guild = plugin.guildManager.getGuildFromPlayer(plugin.server.getPlayer(sender.name)?.uniqueId!!) ?: return
@@ -149,6 +168,8 @@ class GuildCommand : BaseCommand() {
     }
 
     @Subcommand("setcolor")
+    @Syntax("<hex color>")
+    @Description("Leader: Set your guild's color.")
     fun GuildSetColorCommand(sender: CommandSender, @Single color: String) {
         if (!permCheck(sender, GuildRole.LEADER)) return
         val guild = plugin.guildManager.getGuildFromPlayer(plugin.server.getPlayer(sender.name)?.uniqueId!!) ?: return
@@ -158,6 +179,8 @@ class GuildCommand : BaseCommand() {
     }
 
     @Subcommand("chat")
+    @Syntax("[message]")
+    @Description("Toggle guild chat or send a message.")
     fun GuildChatCommand(sender: CommandSender, @Optional message: String?) {
         val uuid = plugin.server.getPlayer(sender.name)?.uniqueId ?: return
         if (!permCheck(sender, GuildRole.MEMBER)) return
@@ -178,6 +201,8 @@ class GuildCommand : BaseCommand() {
     }
 
     @Subcommand("promote")
+    @Syntax("<player>")
+    @Description("Leader: Promote a member to officer or transfer ownership.")
     @CommandCompletion("@guildMembers")
     fun GuildPromoteCommand(sender: CommandSender, @Single player: String) {
         if (!permCheck(sender, GuildRole.LEADER)) return
@@ -204,6 +229,8 @@ class GuildCommand : BaseCommand() {
     }
 
     @Subcommand("demote")
+    @Syntax("<player>")
+    @Description("Leader: Demote a officer to member.")
     @CommandCompletion("@guildMembers")
     fun GuildDemoteCommand(sender: CommandSender, @Single player: String) {
         if (!permCheck(sender, GuildRole.LEADER)) return
@@ -223,6 +250,8 @@ class GuildCommand : BaseCommand() {
     }
 
     @Subcommand("info")
+    @Syntax("[name]")
+    @Description("Get information about your current guild or a custom one.")
     @CommandCompletion("@guilds")
     fun GuildInfoCommand(sender: CommandSender, @Optional @Single name: String?) {
         val uuid = plugin.server.getPlayer(sender.name)?.uniqueId ?: return
